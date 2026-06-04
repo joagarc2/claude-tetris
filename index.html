@@ -56,10 +56,26 @@
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
+        <div id="name-input-section" class="hidden">
+          <p class="name-input-label">¡Nueva puntuación top 5! Ingresa tu nombre:</p>
+          <div class="name-input-row">
+            <input type="text" id="player-name" maxlength="16" placeholder="Tu nombre" autocomplete="off" />
+            <button id="submit-score-btn">Guardar</button>
+          </div>
+        </div>
+        <div id="records-table"></div>
         <button id="restart-btn">Reiniciar</button>
       </div>
     </div>
   </div>
+
+  <section id="start-records">
+    <div class="start-records-header">
+      <span class="label">MEJORES PUNTUACIONES</span>
+      <button id="clear-records-btn">Borrar records</button>
+    </div>
+    <div id="start-records-table"></div>
+  </section>
 
   <script src="game.js"></script>
 </body>
