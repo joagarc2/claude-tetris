@@ -13,18 +13,33 @@ const COLORS = [
   '#e57373', // Z - red
   '#90caf9', // J - light blue
   '#ffb74d', // L - orange
+  '#f06292', // +    - rosa
+  '#26c6da', // U    - turquesa
+  '#aed581', // Y    - lima
+  '#ffe57a', // 1×1  - dorado (recompensa)
+  '#b0bec5', // 3×3  - gris frío (reto)
 ];
 
 const PIECES = [
   null,
-  [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]], // I
-  [[2,2],[2,2]],                               // O
-  [[0,3,0],[3,3,3],[0,0,0]],                  // T
-  [[0,4,4],[4,4,0],[0,0,0]],                  // S
-  [[5,5,0],[0,5,5],[0,0,0]],                  // Z
-  [[6,0,0],[6,6,6],[0,0,0]],                  // J
-  [[0,0,7],[7,7,7],[0,0,0]],                  // L
+  [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]], // 1 I
+  [[2,2],[2,2]],                               // 2 O
+  [[0,3,0],[3,3,3],[0,0,0]],                  // 3 T
+  [[0,4,4],[4,4,0],[0,0,0]],                  // 4 S
+  [[5,5,0],[0,5,5],[0,0,0]],                  // 5 Z
+  [[6,0,0],[6,6,6],[0,0,0]],                  // 6 J
+  [[0,0,7],[7,7,7],[0,0,0]],                  // 7 L
+  [[0,8,0],[8,8,8],[0,8,0]],                  // 8 + (plus)
+  [[9,0,9],[9,9,9]],                           // 9 U
+  [[0,10],[10,10],[0,10],[0,10]],              // 10 Y
+  [[11]],                                      // 11 1×1 (recompensa Tetris)
+  [[12,12,12],[12,0,12],[12,12,12]],           // 12 3×3 hueca (reto)
 ];
+
+const STANDARD_MAX = 7;               // tipos 1..7 = piezas clásicas
+const SPECIAL_TYPES = [8, 9, 10, 12]; // pool ocasional: +, U, Y, 3×3 hueca
+const SINGLE_TYPE = 11;               // recompensa tras Tetris
+const SPECIAL_CHANCE = 0.08;          // ~8% de probabilidad de pieza especial
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
@@ -58,16 +73,27 @@ themeToggle.addEventListener('change', () => {
   }
 });
 
-let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId, pendingPieces;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
 }
 
-function randomPiece() {
-  const type = Math.floor(Math.random() * 7) + 1;
+function makePiece(type) {
   const shape = PIECES[type].map(row => [...row]);
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
+}
+
+function randomPiece() {
+  if (Math.random() < SPECIAL_CHANCE) {
+    const type = SPECIAL_TYPES[Math.floor(Math.random() * SPECIAL_TYPES.length)];
+    return makePiece(type);
+  }
+  return makePiece(Math.floor(Math.random() * STANDARD_MAX) + 1);
+}
+
+function nextPiece() {
+  return pendingPieces.length ? pendingPieces.shift() : randomPiece();
 }
 
 function collide(shape, ox, oy) {
@@ -126,6 +152,7 @@ function clearLines() {
     score += (LINE_SCORES[cleared] || 0) * level;
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    if (cleared === 4) pendingPieces.push(makePiece(SINGLE_TYPE)); // Tetris → recompensa 1×1
     updateHUD();
   }
 }
@@ -161,7 +188,7 @@ function lockPiece() {
 
 function spawn() {
   current = next;
-  next = randomPiece();
+  next = nextPiece();
   if (collide(current.shape, current.x, current.y)) {
     endGame();
   }
@@ -284,8 +311,9 @@ function init() {
   gameOver = false;
   dropInterval = 1000;
   dropAccum = 0;
+  pendingPieces = [];
   lastTime = performance.now();
-  next = randomPiece();
+  next = nextPiece();
   spawn();
   updateHUD();
   overlay.classList.add('hidden');
