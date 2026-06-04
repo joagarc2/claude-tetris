@@ -55,6 +55,14 @@ const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
 const themeToggle = document.getElementById('theme-toggle');
+const pauseMenu = document.getElementById('pause-menu');
+const resumeBtn = document.getElementById('resume-btn');
+const restartFromPauseBtn = document.getElementById('restart-from-pause-btn');
+const controlsToggleBtn = document.getElementById('controls-toggle-btn');
+const pauseControlsList = document.querySelector('.pause-controls-list');
+const initialLevelDisplay = document.getElementById('initial-level-display');
+const initialLevelDec = document.getElementById('initial-level-dec');
+const initialLevelInc = document.getElementById('initial-level-inc');
 
 (function initTheme() {
   if (localStorage.getItem('theme') === 'light') {
@@ -62,6 +70,11 @@ const themeToggle = document.getElementById('theme-toggle');
     themeToggle.checked = true;
   }
 })();
+
+let initialLevel = parseInt(localStorage.getItem('tetris-initial-level'), 10) || 1;
+if (initialLevel < 1) initialLevel = 1;
+if (initialLevel > 15) initialLevel = 15;
+initialLevelDisplay.textContent = initialLevel;
 
 themeToggle.addEventListener('change', () => {
   if (themeToggle.checked) {
@@ -150,7 +163,7 @@ function clearLines() {
   if (cleared) {
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
-    level = Math.floor(lines / 10) + 1;
+    level = Math.max(initialLevel, Math.floor(lines / 10) + 1);
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     if (cleared === 4) pendingPieces.push(makePiece(SINGLE_TYPE)); // Tetris → recompensa 1×1
     updateHUD();
@@ -275,13 +288,12 @@ function togglePause() {
   if (gameOver) return;
   paused = !paused;
   if (!paused) {
+    pauseMenu.classList.add('hidden');
     lastTime = performance.now();
     loop(lastTime);
   } else {
     cancelAnimationFrame(animId);
-    overlayTitle.textContent = 'PAUSA';
-    overlayScore.textContent = '';
-    overlay.classList.remove('hidden');
+    pauseMenu.classList.remove('hidden');
   }
 }
 
@@ -306,23 +318,26 @@ function init() {
   board = createBoard();
   score = 0;
   lines = 0;
-  level = 1;
+  level = initialLevel;
   paused = false;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = Math.max(100, 1000 - (initialLevel - 1) * 90);
   dropAccum = 0;
   pendingPieces = [];
+  pauseControlsList.classList.add('hidden');
+  controlsToggleBtn.textContent = 'Ver controles';
   lastTime = performance.now();
   next = nextPiece();
   spawn();
   updateHUD();
   overlay.classList.add('hidden');
+  pauseMenu.classList.add('hidden');
   cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
 }
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyP') { togglePause(); return; }
+  if (e.code === 'KeyP' || e.code === 'Escape') { e.preventDefault(); togglePause(); return; }
   if (paused || gameOver) return;
   switch (e.code) {
     case 'ArrowLeft':
@@ -347,5 +362,35 @@ document.addEventListener('keydown', e => {
 });
 
 restartBtn.addEventListener('click', init);
+
+resumeBtn.addEventListener('click', () => {
+  if (paused) togglePause();
+});
+
+restartFromPauseBtn.addEventListener('click', () => {
+  init();
+});
+
+controlsToggleBtn.addEventListener('click', () => {
+  const visible = pauseControlsList.classList.toggle('hidden');
+  // toggle returns true when class WAS added (now hidden), false when removed (now visible)
+  controlsToggleBtn.textContent = visible ? 'Ver controles' : 'Ocultar controles';
+});
+
+initialLevelDec.addEventListener('click', () => {
+  if (initialLevel > 1) {
+    initialLevel--;
+    initialLevelDisplay.textContent = initialLevel;
+    localStorage.setItem('tetris-initial-level', initialLevel);
+  }
+});
+
+initialLevelInc.addEventListener('click', () => {
+  if (initialLevel < 15) {
+    initialLevel++;
+    initialLevelDisplay.textContent = initialLevel;
+    localStorage.setItem('tetris-initial-level', initialLevel);
+  }
+});
 
 init();
