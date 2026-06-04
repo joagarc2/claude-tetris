@@ -61,7 +61,10 @@ jobs:
               Si NO existe, créalo con: gh issue comment ${{ github.event.issue.number }} --body "<texto>"
 
               El comentario es un DIAGNÓSTICO TÉCNICO, NO una implementación. NO escribas código
-              ni parches. Estructura en español:
+              ni parches. Redáctalo en Markdown compatible con GitHub (GFM): usa ## para títulos,
+              **negrita**, listas con -, `código inline` para nombres de funciones/constantes, y
+              --- para separadores. El resultado debe renderizarse correctamente en la interfaz
+              de GitHub. Estructura en español:
 
                 <!-- claude-triage-diagnosis -->
                 ## Diagnóstico técnico (automático)
