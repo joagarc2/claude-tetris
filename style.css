@@ -210,6 +210,48 @@ kbd {
   transition: color 0.25s;
 }
 
+/* ---- Skin selector ---- */
+#skin-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+}
+
+#skin-select:focus {
+  outline: none;
+  border-color: var(--accent-hover);
+}
+
+/* ---- Neon skin overrides ---- */
+body.skin-neon {
+  --bg: #05050f;
+  --canvas-bg: #08081a;
+  --canvas-border: #1a1aff;
+  --grid-color: #0e0e28;
+  --label-color: #4444aa;
+  --accent: #00fff5;
+  --accent-hover: #80fffa;
+  --kbd-bg: #0a0a20;
+  --kbd-border: #2222aa;
+  --title-shadow: rgba(0, 255, 245, 0.7);
+}
+
+body.skin-neon #board,
+body.skin-neon #next-canvas {
+  box-shadow: 0 0 30px rgba(0, 255, 245, 0.25), 0 0 60px rgba(0, 0, 0, 0.8);
+}
+
 /* ---- Overlay ---- */
 .overlay {
   position: absolute;
