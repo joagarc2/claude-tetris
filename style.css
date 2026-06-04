@@ -266,3 +266,148 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Name input section ---- */
+.name-input-label {
+  font-size: 12px;
+  color: var(--text);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.name-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+#player-name {
+  background: var(--canvas-bg);
+  border: 1px solid var(--canvas-border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  padding: 8px 12px;
+  outline: none;
+  width: 140px;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+#player-name:focus {
+  border-color: var(--accent);
+}
+
+#submit-score-btn {
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.15s;
+}
+
+#submit-score-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* ---- Records table (overlay + start screen) ---- */
+.records-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.records-tbl th {
+  color: var(--label-color);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  text-align: right;
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--canvas-border);
+  text-transform: uppercase;
+}
+
+.records-tbl th:nth-child(1),
+.records-tbl th:nth-child(2) {
+  text-align: left;
+}
+
+.records-tbl td {
+  padding: 4px 6px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.records-tbl td:nth-child(1),
+.records-tbl td:nth-child(2) {
+  text-align: left;
+}
+
+.records-tbl tr.highlight td {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.records-tbl .empty-row td {
+  color: var(--label-color);
+  text-align: center;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+/* ---- Start records section ---- */
+#start-records {
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 16px;
+  background: var(--canvas-bg);
+  border: 1px solid var(--canvas-border);
+  border-radius: 6px;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.start-records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+#clear-records-btn {
+  background: transparent;
+  color: var(--label-color);
+  border: 1px solid var(--canvas-border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+#clear-records-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Records in overlay are more compact */
+#records-table {
+  width: 100%;
+  min-width: 260px;
+}
+
+#records-table .records-tbl {
+  font-size: 11px;
+}
